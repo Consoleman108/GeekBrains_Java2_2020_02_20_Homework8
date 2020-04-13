@@ -48,6 +48,20 @@ public class ClientHandler {
                 }
             }).start();
 
+            // Поток для отсчита время для отключения пользователей которые не прошли аутентификацию.
+            new Thread(() -> {
+                try {
+                    Thread.currentThread().sleep(TIMEOUT_AUTHENTICATION);
+                    if(nickname == null){
+                        Command authErrorCommand = Command.authErrorCommand("Время ожидания превышено");
+                        sendMessage(authErrorCommand);
+                        closeConnection();
+                        System.out.println("Соединение разорвано");
+                    }
+                } catch (InterruptedException | IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
 
         } catch (IOException e) {
             e.printStackTrace();
